@@ -1,5 +1,6 @@
 package com.example.TaskManager.Services;
 
+import com.example.TaskManager.Enum.UserRole;
 import com.example.TaskManager.Models.UserModel;
 import com.example.TaskManager.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,23 +11,39 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
 
     @Autowired
     UserRepo repo;
+
     @Autowired
-    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    PasswordEncoder encoder ;
     @Autowired
     AuthenticationManager manager;
     @Autowired
     JwtService jwtService;
 
     public ResponseEntity<?> registerUser(UserModel user){
+        Optional<UserModel> userExist = repo.findByEmail(user.getEmail());
+        if(userExist.isPresent()){
+            if (userExist.get().getUserRole()== UserRole.ADMIN)
+                return new ResponseEntity<>("Admin already exist",HttpStatus.BAD_REQUEST);
+            else
+                return new ResponseEntity<>("Employee already exist",HttpStatus.BAD_REQUEST);
+        }
+        if(user.getUserRole()==null)
+            user.setUserRole(UserRole.EMPLOYEE);
+
         user.setPassword(encoder.encode(user.getPassword()));
-        return new ResponseEntity<>(repo.save(user),HttpStatus.CREATED);
+        UserModel addUser = repo.save(user);
+        addUser.setPassword(null);
+        return new ResponseEntity<>(addUser,HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> verify(UserModel user) {

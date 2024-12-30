@@ -1,10 +1,7 @@
 package com.example.TaskManager.Models;
 
 import com.example.TaskManager.Enum.UserRole;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +12,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @AllArgsConstructor
 @Component
+@Table(name = "user_model")
 public class UserModel {
 
     @Id
@@ -23,5 +21,6 @@ public class UserModel {
     private String email;
     private String name;
     private String password;
+    @Enumerated(EnumType.STRING)
     private UserRole userRole;
 }
