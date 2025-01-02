@@ -19,7 +19,7 @@ public class AdminInitializer {
 
     @PostConstruct
     public void initializeAdmin(){
-        if(repo.findByUserRole(UserRole.ADMIN)==null){
+        if(repo.findByUserRole(UserRole.ADMIN).isEmpty()){
             UserModel admin = new UserModel();
             admin.setPassword(passwordEncoder.encode("admin@123"));
             admin.setName("Admin");

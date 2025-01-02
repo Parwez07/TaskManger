@@ -1,7 +1,7 @@
 package com.example.TaskManager.SecurityConfig;
 
-import com.example.TaskManager.Services.JwtService;
-import com.example.TaskManager.Services.MyUserDetailsService;
+import com.example.TaskManager.Services.Auth.JwtService;
+import com.example.TaskManager.Services.Auth.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

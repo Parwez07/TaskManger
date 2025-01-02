@@ -1,4 +1,4 @@
-package com.example.TaskManager.Services;
+package com.example.TaskManager.Services.Auth;
 
 import com.example.TaskManager.Models.UserModel;
 import com.example.TaskManager.Models.UserPrincipal;

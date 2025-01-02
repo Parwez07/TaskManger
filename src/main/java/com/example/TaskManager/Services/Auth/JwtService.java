@@ -1,7 +1,12 @@
-package com.example.TaskManager.Services;
+package com.example.TaskManager.Services.Auth;
 
+import com.example.TaskManager.Models.UserModel;
+import com.example.TaskManager.Repo.UserRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +16,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class JwtService {
+
+    @Autowired
+    UserRepo userRepo;
 
     private static SecretKey secretKey;
 
@@ -74,5 +83,16 @@ public class JwtService {
     public Date ExpirationTime(String token){
         Claims claims = extractClaims(token);
         return claims.getExpiration();
+    }
+
+    public UserModel getCurrentLoggedIn(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication!=null && authentication.isAuthenticated()){
+            UserModel userModel = (UserModel) authentication.getPrincipal();
+            Optional<UserModel> user = userRepo.findById(userModel.getId());
+            return user.orElse(null);
+        }
+        return null;
     }
 }
