@@ -3,6 +3,7 @@ package com.example.TaskManager.Services.Users;
 import com.example.TaskManager.Enum.UserRole;
 import com.example.TaskManager.Models.Dto.UserDTO;
 import com.example.TaskManager.Models.UserModel;
+import com.example.TaskManager.Models.UserPrincipal;
 import com.example.TaskManager.Repo.UserRepo;
 import com.example.TaskManager.Services.Auth.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,5 +64,17 @@ public class UserService {
                 .map(user -> new UserDTO(user.getId(), user.getEmail(), user.getName(), user.getUserRole()))
                 .toList();
         return new ResponseEntity<>(usersList, HttpStatus.OK);
+    }
+
+    public  UserModel getCurrentLoggedIn(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication!=null && authentication.isAuthenticated()){
+            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+            UserModel userModel = principal.getUserModel();
+            Optional<UserModel> user = repo.findById(userModel.getId());
+            return user.orElse(null);
+        }
+        return null;
     }
 }

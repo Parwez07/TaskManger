@@ -27,7 +27,8 @@ public class TaskServices {
     public ResponseEntity<?> getAllTask() {
 
         List<TaskDto> taskDtoList = taskRepo.findAll().stream()
-                .map(UtilitiesServices::mapToDto).toList();
+                .map(UtilitiesServices::mapToDto)
+                .sorted(Comparator.comparing(TaskDto::getTaskDueDate).reversed()).toList();
 
         return new ResponseEntity<>(taskDtoList, HttpStatus.OK);
     }
@@ -58,15 +59,19 @@ public class TaskServices {
         return new ResponseEntity<>(task,HttpStatus.OK);
     }
 
-    public ResponseEntity<?> updateTask(TaskDto task,long id) {
-        UserModel userToAssign = userRepo.findById(task.getEmployeeId()).orElseThrow(()->new RuntimeException("Employee dose not exit with Assigned Employee Id"));
+    public ResponseEntity<?> updateTask(TaskDto task,Long id) {
+        Long empId = task.getEmployeeId();
         Task oldTask = taskRepo.findById(id).orElse(new Task());
-        oldTask.setDueDate(task.getTaskDueDate());
-        oldTask.setDescription(task.getTaskDescription());
-        oldTask.setTitle(task.getTaskTitle());
+        if(empId==null){
+            empId = oldTask.getUser().getId();
+        }
+        UserModel userToAssign = userRepo.findById(empId).orElseThrow(()->new RuntimeException("Employee dose not exit with Assigned Employee Id"));
+        oldTask.setDueDate((task.getTaskDueDate()==null)?oldTask.getDueDate():task.getTaskDueDate());
+        oldTask.setDescription((task.getTaskDescription()==null)?oldTask.getDescription():task.getTaskDescription());
+        oldTask.setTitle((task.getTaskTitle()==null?oldTask.getTitle():task.getTaskTitle()));
         oldTask.setUser(userToAssign);
-        oldTask.setPriority(task.getTaskPriority());
-        oldTask.setTaskStatus(task.getTaskStatus());
+        oldTask.setPriority((task.getTaskPriority()==null?oldTask.getPriority():task.getTaskPriority()));
+        oldTask.setTaskStatus((task.getTaskStatus()==null?oldTask.getTaskStatus():task.getTaskStatus()));
 
         return new ResponseEntity<>(taskRepo.save(oldTask),HttpStatus.ACCEPTED);
     }
@@ -103,6 +108,8 @@ public class TaskServices {
 
     public List<TaskDto> getEmployeeTask(Long id) {
         List<Task> task = taskRepo.findByUser_id(id);
-        return task.stream().map(UtilitiesServices::mapToDto).toList();
+        return task.stream().map(UtilitiesServices::mapToDto)
+                            .sorted(Comparator.comparing(TaskDto::getTaskDueDate)
+                            .reversed()).toList();
     }
 }

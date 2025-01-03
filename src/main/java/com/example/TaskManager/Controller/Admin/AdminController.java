@@ -66,7 +66,7 @@ public class AdminController {
     }
 
     @PutMapping("/updateTask/{id}")
-    public ResponseEntity<?> updateTask(@RequestBody TaskDto task,@PathVariable long id){
+    public ResponseEntity<?> updateTask(@RequestBody TaskDto task,@PathVariable Long id){
 
         return taskServices.updateTask(task,id);
     }
@@ -89,5 +89,14 @@ public class AdminController {
             return ResponseEntity.notFound().build();
 
         return ResponseEntity.ok(tasks);
+    }
+
+    @GetMapping("/adminTask")
+    public ResponseEntity<?> getAdminTask(){
+        UserModel currUser = service.getCurrentLoggedIn();
+        if (currUser==null)
+            return ResponseEntity.notFound().build();
+        List<TaskDto> employeeTask = taskServices.getEmployeeTask(currUser.getId());
+        return ResponseEntity.ok(employeeTask);
     }
 }

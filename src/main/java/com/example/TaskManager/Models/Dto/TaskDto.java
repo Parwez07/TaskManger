@@ -21,6 +21,6 @@ public class TaskDto {
     private TaskPriority taskPriority;
     private TaskStatus taskStatus;
     private String employeeName;
-    private long employeeId;
+    private Long employeeId;
 
 }

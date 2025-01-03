@@ -22,7 +22,7 @@ import java.util.Optional;
 public class JwtService {
 
     @Autowired
-    UserRepo userRepo;
+    static UserRepo userRepo;
 
     private static SecretKey secretKey;
 
@@ -85,14 +85,5 @@ public class JwtService {
         return claims.getExpiration();
     }
 
-    public UserModel getCurrentLoggedIn(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication!=null && authentication.isAuthenticated()){
-            UserModel userModel = (UserModel) authentication.getPrincipal();
-            Optional<UserModel> user = userRepo.findById(userModel.getId());
-            return user.orElse(null);
-        }
-        return null;
-    }
 }
