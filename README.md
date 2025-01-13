@@ -23,7 +23,7 @@ Purpose: Simplify task collaboration by providing a secure, efficient, and user-
 ## 🛠️ Technologies Used
 
 - **Backend**: Spring Boot 3
-- **Database**: JPA with Hibernate (e.g., PostgreSQL, MySQL)
+- **Database**: MySQL
 - **Authentication**: Spring Security
 - **Data Transfer**: REST APIs
 
