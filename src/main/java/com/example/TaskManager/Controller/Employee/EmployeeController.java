@@ -4,6 +4,7 @@ import com.example.TaskManager.Models.Dto.TaskDto;
 import com.example.TaskManager.Models.UserModel;
 import com.example.TaskManager.Services.Task.TaskServices;
 import com.example.TaskManager.Services.Users.UserService;
+import com.example.TaskManager.Utility.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 public class EmployeeController {
 
     @Autowired
-    UserService userService;
+    CurrentUser currentUser;
 
     @Autowired
     TaskServices taskServices;
@@ -29,7 +30,7 @@ public class EmployeeController {
     @GetMapping("/tasks")
     public ResponseEntity<?> getAllTasks(){
 
-        UserModel currUser = userService.getCurrentLoggedIn();
+        UserModel currUser = currentUser.getCurrentLoggedIn();
         if (currUser==null)
             return ResponseEntity.notFound().build();
 

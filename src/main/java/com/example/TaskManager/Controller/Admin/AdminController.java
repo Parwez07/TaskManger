@@ -6,6 +6,7 @@ import com.example.TaskManager.Models.Task;
 import com.example.TaskManager.Models.UserModel;
 import com.example.TaskManager.Services.Task.TaskServices;
 import com.example.TaskManager.Services.Users.UserService;
+import com.example.TaskManager.Utility.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,9 @@ public class AdminController {
 
     @Autowired
     UserService service;
+    @Autowired
+    CurrentUser currentUser;
+
     @Autowired
     TaskServices taskServices;
 
@@ -93,7 +97,7 @@ public class AdminController {
 
     @GetMapping("/adminTask")
     public ResponseEntity<?> getAdminTask(){
-        UserModel currUser = service.getCurrentLoggedIn();
+        UserModel currUser = currentUser.getCurrentLoggedIn();
         if (currUser==null)
             return ResponseEntity.notFound().build();
         List<TaskDto> employeeTask = taskServices.getEmployeeTask(currUser.getId());

@@ -26,6 +26,8 @@ public class SecurityConfig {
     UserDetailsService userDetailsService;
     @Autowired
     JwtFilter jwtFilter;
+    @Autowired
+    CommentFilter commentFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,10 +37,12 @@ public class SecurityConfig {
                 .requestMatchers("addUser","login").permitAll()
                         .requestMatchers("/admin/**").hasAnyAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/employee/**").hasAnyAuthority(UserRole.EMPLOYEE.name())
+                        .requestMatchers("/comment").authenticated()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(commentFilter,JwtFilter.class);
         return http.build();
     }
 

@@ -66,15 +66,4 @@ public class UserService {
         return new ResponseEntity<>(usersList, HttpStatus.OK);
     }
 
-    public  UserModel getCurrentLoggedIn(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if(authentication!=null && authentication.isAuthenticated()){
-            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-            UserModel userModel = principal.getUserModel();
-            Optional<UserModel> user = repo.findById(userModel.getId());
-            return user.orElse(null);
-        }
-        return null;
-    }
 }
